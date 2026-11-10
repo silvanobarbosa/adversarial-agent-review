@@ -1,0 +1,16 @@
+adversarial-agent-review
+Copyright 2026 Silvano Barbosa
+
+This product includes an independent re-implementation of the concept behind the
+Elephant-Goldfish Model (EGM) by Google LLC, licensed under the Apache License, Version 2.0:
+
+    https://github.com/google/elephant-goldfish-model
+
+The "fresh reviewers" idea in skills/goldfish/SKILL.md — that the agent which wrote a plan
+must not be the agent that approves it, and that distinct review "lenses" should be run by
+subagents with no prior context — is derived from EGM's concept. This project re-implements
+that concept in prose and does not copy EGM's source code. Any attribution and NOTICE
+requirements of the EGM project are acknowledged here.
+
+The Heilmeier Catechism referenced in the skill is the public set of evaluation questions
+formulated by George H. Heilmeier and is not covered by any license.

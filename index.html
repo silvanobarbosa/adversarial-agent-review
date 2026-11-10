@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adversarial Agent Review</title>
+<meta name="description" content="A copy-pasteable harness that gives coding agents an independent second opinion: a fresh-reviewer skill and PASS/FAIL judges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root {
+    --ink: #0e0f13;
+    --panel: #ffffff;
+    --panel-2: #f5f5f3;
+    --line: #e2e1dc;
+    --text: #17181d;
+    --muted: #5c5d66;
+    --accent: #c6ff3f;        /* signal — used sparingly */
+    --accent-ink: #1a1f00;
+    --pass: #1f9d57;
+    --fail: #d13b57;
+    --bg: var(--panel);
+    --fg: var(--text);
+    --card: var(--panel-2);
+    --radius: 14px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Inter", system-ui, -apple-system, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: var(--ink);
+      --fg: #eceddf;
+      --card: #16171c;
+      --line: #26272e;
+      --text: #eceddf;
+      --muted: #9a9ba6;
+      --pass: #35c46b;
+      --fail: #f0506a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: var(--ink);
+    --fg: #eceddf;
+    --card: #16171c;
+    --line: #26272e;
+    --text: #eceddf;
+    --muted: #9a9ba6;
+    --pass: #35c46b;
+    --fail: #f0506a;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+  code, pre, .mono { font-family: var(--mono); }
+
+  header.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 700; letter-spacing: -0.02em; }
+  .brand .dot { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); display: inline-block; }
+  .ghlink { font-family: var(--mono); font-size: 14px; text-decoration: none; border: 1px solid var(--line); padding: 7px 13px; border-radius: 999px; color: var(--muted); }
+  .ghlink:hover { color: var(--fg); border-color: var(--fg); }
+
+  .hero { padding: 48px 0 40px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(42px, 8vw, 78px); line-height: 1.02; letter-spacing: -0.015em; margin: 0 0 20px; text-wrap: balance; }
+  h1 em { font-style: italic; color: var(--muted); }
+  .lede { font-size: clamp(18px, 2.4vw, 21px); color: var(--muted); max-width: 60ch; margin: 0 0 28px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { font-family: var(--mono); font-size: 14px; font-weight: 700; text-decoration: none; padding: 11px 18px; border-radius: 999px; display: inline-block; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.ghost { border: 1px solid var(--line); color: var(--fg); }
+  .btn.ghost:hover { border-color: var(--fg); }
+
+  .pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; margin-top: 34px; color: var(--muted); }
+  .pipeline b { color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; font-weight: 500; }
+  .pipeline b.hl { border-color: var(--accent); color: var(--fg); }
+  .pipeline .arr { opacity: 0.5; }
+
+  section { padding: 54px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(28px, 5vw, 40px); letter-spacing: -0.01em; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 30px; max-width: 62ch; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .card .tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .card h3 { font-size: 20px; margin: 10px 0 6px; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .card .file { font-family: var(--mono); font-size: 13px; color: var(--fg); margin-top: 12px; display: inline-block; background: var(--bg); border: 1px solid var(--line); padding: 3px 8px; border-radius: 6px; }
+
+  .verdict-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 26px; }
+  .pill { font-family: var(--mono); font-weight: 700; font-size: 14px; padding: 8px 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; }
+  .pill.pass { color: var(--pass); border: 1px solid var(--pass); }
+  .pill.fail { color: var(--fail); border: 1px solid var(--fail); }
+  .pill .ex { opacity: 0.7; font-weight: 500; }
+
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; overflow-x: auto; font-size: 14px; line-height: 1.7; margin: 0; }
+  pre .c { color: var(--muted); }
+  pre .a { color: var(--pass); }
+
+  footer { padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
+  footer a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--line); }
+  footer a:hover { border-color: var(--fg); }
+  .as-is { font-family: var(--mono); font-size: 12.5px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="brand"><span class="dot"></span>adversarial-agent-review</span>
+    <a class="ghlink" href="https://github.com/silvanobarbosa/adversarial-agent-review">GitHub ↗</a>
+  </header>
+
+  <div class="hero">
+    <p class="eyebrow">A second opinion for coding agents</p>
+    <h1>The model that wrote it <em>can't</em> be the one that approves it.</h1>
+    <p class="lede">A small, copy-pasteable harness: a fresh-reviewer skill that stress-tests a plan
+      before code exists, and independent judges that return a hard PASS / FAIL on the result. No
+      framework. Apache-2.0.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/silvanobarbosa/adversarial-agent-review">Get it on GitHub</a>
+      <a class="btn ghost" href="#inside">What's inside</a>
+    </div>
+    <div class="pipeline">
+      <b>planner</b><span class="arr">→</span><b class="hl">goldfish</b><span class="arr">→</span><b>builder</b><span class="arr">→</span><b class="hl">judge</b><span class="arr">→</span><b>fixer</b>
+    </div>
+  </div>
+
+  <section id="inside">
+    <h2>What's inside</h2>
+    <p class="sub">Two parts, usable separately. The review core keeps the logic honest; the design
+      tools keep the UI from looking auto-generated.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">A · Review core</span>
+        <h3>The goldfish skill</h3>
+        <p>Fresh subagents — no conversation history — each on one lens (comprehension, architecture,
+          YAGNI, contradictions, readiness) tear into a plan before you build. Prompt + process only.</p>
+        <span class="file">skills/goldfish/</span>
+      </div>
+      <div class="card">
+        <span class="tag">A · Review core</span>
+        <h3>Security judge</h3>
+        <p>An independent model reads a repo's routes, middleware, schema and actions and returns a
+          gate: broken authz/BOLA, IDOR, injection, hardcoded secrets, PII exposure.</p>
+        <span class="file">judges/factory-judge.mjs</span>
+      </div>
+      <div class="card">
+        <span class="tag">B · Design</span>
+        <h3>Design judge</h3>
+        <p>Screenshots a live URL and asks a vision model: own identity, or a generic AI template?
+          Scores hierarchy, polish, brand, readability.</p>
+        <span class="file">judges/design-judge.mjs</span>
+      </div>
+      <div class="card">
+        <span class="tag">B · Design</span>
+        <h3>Design-system generator</h3>
+        <p>Deterministic CSS tokens: same app name → same theme, different names → distinct themes.
+          No API key, no network.</p>
+        <span class="file">design/gen-design-system.mjs</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>One contract: the exit code is the gate</h2>
+    <p class="sub">Both judges print a JSON verdict to stdout and use their exit code as the CI gate.
+      Independence from the authoring model is the entire point.</p>
+    <div class="verdict-row">
+      <span class="pill pass">PASS <span class="ex">exit 0</span></span>
+      <span class="pill fail">FAIL <span class="ex">exit 1</span></span>
+      <span class="pill" style="color:var(--muted);border:1px solid var(--line)">ERROR <span class="ex">exit 2</span></span>
+    </div>
+<pre><span class="c"># independent review of a repo — fails CI on any critical/high finding</span>
+cp .env.example .env   <span class="c"># GITHUB_TOKEN + OPENROUTER_API_KEY (or GROQ_API_KEY)</span>
+node judges/factory-judge.mjs owner/repo main
+
+<span class="c"># is the UI distinctive, or a generic template?</span>
+node judges/design-judge.mjs https://your-app.example.com
+
+<span class="c"># a unique, repeatable theme from a name</span>
+node design/gen-design-system.mjs <span class="a">"My App"</span> --&gt; :root { ... } CSS tokens</pre>
+  </section>
+
+  <footer>
+    <div>Re-implements the concept behind Google's
+      <a href="https://github.com/google/elephant-goldfish-model">Elephant-Goldfish Model</a>
+      (Apache-2.0) — the rule, not the code. See <code>NOTICE</code>.</div>
+    <div class="as-is">Apache-2.0 · provided as-is, no support SLA · © 2026 Silvano Barbosa</div>
+  </footer>
+
+</div>
+</body>
+</html>
