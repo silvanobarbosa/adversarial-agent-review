@@ -1,0 +1,18 @@
+adversarial-agent-review
+Copyright 2026 the adversarial-agent-review authors
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this project except in compliance with the License. A copy of the License is in
+the LICENSE file.
+
+------------------------------------------------------------------------------
+Attribution
+
+The fresh-reviewer review pattern in skills/goldfish is adapted from the
+Elephant-Goldfish Model by Google LLC
+(https://github.com/google/elephant-goldfish-model), which is licensed under the
+Apache License, Version 2.0.
+
+This is an independent re-implementation of the *idea* (fresh subagents, one per
+lens, review a plan the author cannot approve alone). No source code from the
+upstream project is included or copied here.

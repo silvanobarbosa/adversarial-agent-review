@@ -1,0 +1,16 @@
+{
+  "name": "adversarial-agent-review",
+  "version": "0.1.0",
+  "description": "Fresh-reviewer plan review (goldfish) + an independent PASS/FAIL code judge for AI-written code.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "judge": "./judge.mjs"
+  },
+  "scripts": {
+    "judge": "node judge.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
